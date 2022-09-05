@@ -24,31 +24,43 @@ app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
+app.get("/api", function (req, res) {
+  var date = new Date();
+  //console.log(date);
+  var dateGMT = date.toUTCString();
+  var dateUnix = date.getTime();
 
-app.get("/api/:dateUser", function (req, res) {
-  const { dateUser } = req.params;
+ var responde = {'unix':dateUnix,'utc':dateGMT};
+  res.json(responde);
+});
+
+app.get("/api/:date_string", function (req, res) {
+  const { date_string } = req.params;
+  console.log(date_string);
+  console.log(date_string.indexOf('GMT'));
   var letras="abcdefghyjklmnñopqrstuvwxyz";
-  
   function have_letters(text){
    text = text.toLowerCase();
-   for(i=0; i<text.length; i++){
+    if(date_string.indexOf('GMT')==-1)
+   {for(i=0; i<text.length; i++){
       if (letras.indexOf(text.charAt(i),0)!=-1){
          return 1;
       }
-   }
+   }}
+   
    return 0;
 }
-if(have_letters(dateUser) ==0)
-  {var date = new Date(dateUser); 
+if(have_letters(date_string) ==0) {
+  var date = new Date(date_string); 
   var dateGMT = date.toUTCString();
   var dateUnix = date.getTime();
   if (dateGMT === 'Invalid Date'){
-    date = new Date(parseInt(dateUser,10));
+    date = new Date(parseInt(date_string,10));
     var dateGMT = date.toUTCString();
     var dateUnix = date.getTime();
   } 
-  var responde = {'unix':dateUnix,'utc':dateGMT};}
-  else {
+  var responde = {'unix':dateUnix,'utc':dateGMT};
+} else {
     var responde = {'error':'Invalid Date'}
   }
   res.json(responde);
